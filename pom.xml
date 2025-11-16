@@ -108,13 +108,35 @@
 				<executions>
 					<execution>
 						<goals>
-							<goal>addSources</goal>
 							<goal>addTestSources</goal>
-							<goal>compile</goal>
-							<goal>testCompile</goal>
+							<goal>compileTests</goal>
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<testSources>
+						<testSource>
+							<directory>${project.basedir}/src/test/groovy</directory>
+							<includes>
+								<include>**/*.groovy</include>
+							</includes>
+						</testSource>
+					</testSources>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.2.5</version>
+				<configuration>
+					<includes>
+						<include>**/*Test.*</include>
+						<include>**/*Tests.*</include>
+						<include>**/*Spec.*</include>
+						<include>**/*IT.*</include>
+					</includes>
+					<useFile>false</useFile>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

@@ -36,7 +36,7 @@ class AvailabilityService {
     void checkOverlap(BookingEntity booking) {
         UUID propertyId = booking.getPropertyId();
         DateRange period = booking.getPeriod();
-        log.info("Checking overlap for property [{}] on [{}] fora  booking", propertyId, period);
+        log.info("Checking overlap for property [{}] on [{}] for a booking", propertyId, period);
 
         if (blockRepository.overlapOtherBlock(null, propertyId, period.startAt(), period.endAt())) {
             throw new OverlapException("There is a block overlap");

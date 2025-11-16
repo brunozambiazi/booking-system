@@ -70,7 +70,7 @@ public class BookingService {
         }
 
         booking.rebook();
-        bookingRepository.save(booking);
+        validateAndSave(booking);
     }
 
     @Transactional

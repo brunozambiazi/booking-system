@@ -78,6 +78,31 @@ class BookingOverlapIT extends Specification {
         bookingResult.andExpect(status().isConflict())
     }
 
+    def "should not allow rebook if it overlap other booking"() {
+        given: "An existing property id and booking id"
+        def propertyId = UUID.fromString("bdad3baf-f65d-41eb-a190-677679dec204")
+        def bookingId = UUID.fromString("f170594d-7476-4b0a-b272-0132f1277f1c")
+
+        when: "Original booking is cancelled"
+        mockMvc.perform(put("/api/bookings/${bookingId}/cancel")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent())
+
+        and: "New booking is created for that period"
+        def createBookingRequest = new CreateBookingRequest(propertyId, parse('2026-01-15'), parse('2026-01-25'), [new GuestDto("Doe", "doe.smith@test.com")])
+        mockMvc.perform(post("/api/bookings")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(createBookingRequest)))
+                .andExpect(status().isCreated())
+
+        and: "Original booking is rebooked"
+        def rebookResult = mockMvc.perform(put("/api/bookings/${bookingId}/rebook")
+                .contentType(MediaType.APPLICATION_JSON))
+
+        then: "Rebook should fail"
+        rebookResult.andExpect(status().isConflict())
+    }
+
     def "should correctly prevent overlapping bookings and blocks"() {
         given: "An available property exists for a given period"
         def initialStartAt = parse("2026-02-01")
